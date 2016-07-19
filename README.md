@@ -65,11 +65,11 @@ The sample performs the following tasks to create the load balancer and the load
 
 3. Clone the sample repository.
     
-	    git clone https://github.com/Azure-Samples/virtual-machines-python-load-balancers.git    
+	    git clone https://github.com/Azure-Samples/network-python-manage-loadbalancer.git    
 
 4. Install the dependencies using pip.
 
-	    cd virtual-machines-python-load-balancers
+	    cd network-python-manage-loadbalancer
 	    pip install -r requirements.txt    
 
 5. Create an Azure service principal, using 
