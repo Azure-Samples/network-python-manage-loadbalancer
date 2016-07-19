@@ -126,7 +126,7 @@ def run_example():
         }
     }]
 
-    # Building a BackEnd adress pool
+    # Building a BackEnd address pool
     print('Create BackEndAddressPool configuration')
     backend_address_pools = [{
         'name': ADDRESS_POOL_NAME
