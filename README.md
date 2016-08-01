@@ -6,7 +6,7 @@ author: lmazuel
 
 # Getting Started with Azure Resource Manager for load balancers in Python
 
-This sample shows how to manage a load balancer using the Azure Resource Manager APIs for Node.js.
+This sample shows how to manage a load balancer using the Azure Resource Manager APIs for Python.
 
 You can use a load balancer to provide high availability for your workloads in Azure. An Azure load balancer is a Layer-4 (TCP, UDP) type load balancer that distributes incoming traffic among healthy service instances in cloud services or virtual machines defined in a load balancer set.
 
