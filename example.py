@@ -77,6 +77,8 @@ VERSION = '15.10.201603150'
 # AZURE_CLIENT_SECRET: with your Azure Active Directory Application Secret
 # AZURE_SUBSCRIPTION_ID: with your Azure Subscription Id
 #
+
+
 def run_example():
     """Resource Group management example."""
     #
@@ -84,7 +86,7 @@ def run_example():
     #
     subscription_id = os.environ.get(
         'AZURE_SUBSCRIPTION_ID',
-        '11111111-1111-1111-1111-111111111111') # your Azure Subscription Id
+        '11111111-1111-1111-1111-111111111111')  # your Azure Subscription Id
     credentials = ServicePrincipalCredentials(
         client_id=os.environ['AZURE_CLIENT_ID'],
         secret=os.environ['AZURE_CLIENT_SECRET'],
@@ -97,7 +99,8 @@ def run_example():
 
     # Create Resource group
     print('Create Resource Group')
-    resource_client.resource_groups.create_or_update(GROUP_NAME, {'location':LOCATION})
+    resource_client.resource_groups.create_or_update(
+        GROUP_NAME, {'location': LOCATION})
 
     # Create PublicIP
     print('Create Public IP')
@@ -203,7 +206,7 @@ def run_example():
             'backend_address_pools': backend_address_pools,
             'probes': probes,
             'load_balancing_rules': load_balancing_rules,
-            'inbound_nat_rules' :inbound_nat_rules
+            'inbound_nat_rules': inbound_nat_rules
         }
     )
     lb_info = lb_async_creation.result()
@@ -244,7 +247,8 @@ def run_example():
     async_nic1_creation = network_client.network_interfaces.create_or_update(
         GROUP_NAME,
         VMS_INFO[1]['nic_name'],
-        create_nic_parameters(subnet_info.id, back_end_address_pool_id, inbound_nat_rule_1_id)
+        create_nic_parameters(
+            subnet_info.id, back_end_address_pool_id, inbound_nat_rule_1_id)
     )
 
     inbound_nat_rule_2_id = lb_info.inbound_nat_rules[1].id
@@ -252,7 +256,8 @@ def run_example():
     async_nic2_creation = network_client.network_interfaces.create_or_update(
         GROUP_NAME,
         VMS_INFO[2]['nic_name'],
-        create_nic_parameters(subnet_info.id, back_end_address_pool_id, inbound_nat_rule_2_id)
+        create_nic_parameters(
+            subnet_info.id, back_end_address_pool_id, inbound_nat_rule_2_id)
     )
 
     nic1_info = async_nic1_creation.result()
@@ -281,19 +286,23 @@ def run_example():
 
     # Create VMs
     print('Creating Virtual Machine 1')
-    vm_parameters1 = create_vm_parameters(nic1_info.id, availability_set_info.id, VMS_INFO[1])
+    vm_parameters1 = create_vm_parameters(
+        nic1_info.id, availability_set_info.id, VMS_INFO[1])
     async_vm1_creation = compute_client.virtual_machines.create_or_update(
         GROUP_NAME, VMS_INFO[1]['name'], vm_parameters1)
     async_vm1_creation.wait()
 
     print('Creating Virtual Machine 2')
-    vm_parameters2 = create_vm_parameters(nic2_info.id, availability_set_info.id, VMS_INFO[2])
+    vm_parameters2 = create_vm_parameters(
+        nic2_info.id, availability_set_info.id, VMS_INFO[2])
     async_vm2_creation = compute_client.virtual_machines.create_or_update(
         GROUP_NAME, VMS_INFO[2]['name'], vm_parameters2)
     async_vm2_creation.wait()
 
-    provide_vm_login_info_to_user(1, public_ip_info, FRONTEND_PORT_1, VMS_INFO[1])
-    provide_vm_login_info_to_user(2, public_ip_info, FRONTEND_PORT_2, VMS_INFO[2])
+    provide_vm_login_info_to_user(
+        1, public_ip_info, FRONTEND_PORT_1, VMS_INFO[1])
+    provide_vm_login_info_to_user(
+        2, public_ip_info, FRONTEND_PORT_2, VMS_INFO[2])
 
     input("Press enter to delete this Resource Group.")
 
@@ -302,6 +311,7 @@ def run_example():
     delete_async_operation = resource_client.resource_groups.delete(GROUP_NAME)
     delete_async_operation.wait()
     print("\nDeleted: {}".format(GROUP_NAME))
+
 
 def construct_fip_id(subscription_id):
     """Build the future FrontEndId based on components name.
@@ -312,7 +322,8 @@ def construct_fip_id(subscription_id):
             '/loadBalancers/{}'
             '/frontendIPConfigurations/{}').format(
                 subscription_id, GROUP_NAME, LB_NAME, FIP_NAME
-            )
+    )
+
 
 def construct_bap_id(subscription_id):
     """Build the future BackEndId based on components name.
@@ -323,7 +334,8 @@ def construct_bap_id(subscription_id):
             '/loadBalancers/{}'
             '/backendAddressPools/{}').format(
                 subscription_id, GROUP_NAME, LB_NAME, ADDRESS_POOL_NAME
-            )
+    )
+
 
 def construct_probe_id(subscription_id):
     """Build the future ProbeId based on components name.
@@ -334,16 +346,19 @@ def construct_probe_id(subscription_id):
             '/loadBalancers/{}'
             '/probes/{}').format(
                 subscription_id, GROUP_NAME, LB_NAME, PROBE_NAME
-            )
+    )
+
 
 def provide_vm_login_info_to_user(num, public_ip_info, frontend_port, vm_info):
     """Print on the console the connection information for a given VM.
     """
-    print('\n\nLogin information for the {} VM: {}'.format(num, vm_info['name']))
+    print('\n\nLogin information for the {} VM: {}'.format(
+        num, vm_info['name']))
     print('-------------------------------------------')
     print('ssh to ip:port - {}:{}'.format(public_ip_info.ip_address, frontend_port))
     print('username       - {}'.format(vm_info['username']))
     print('password       - {}'.format(vm_info['password']))
+
 
 def create_nic_parameters(subnet_id, address_pool_id, natrule_id):
     """Create the NIC parameters structure.
@@ -363,6 +378,7 @@ def create_nic_parameters(subnet_id, address_pool_id, natrule_id):
             }]
         }]
     }
+
 
 def create_vm_parameters(nic_id, availset_id, vm_info):
     """Create the VM parameters structure.
@@ -404,6 +420,7 @@ def create_vm_parameters(nic_id, availset_id, vm_info):
             'id': availset_id
         }
     }
+
 
 if __name__ == "__main__":
     run_example()
