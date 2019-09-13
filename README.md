@@ -1,7 +1,11 @@
 ---
-services: load-balancer
-platforms: python
-author: lmazuel
+page_type: sample
+languages:
+- python
+products:
+- azure
+description: "This sample shows how to manage a load balancer using the Azure Resource Manager APIs for Python."
+urlFragment: network-python-manage-loadbalancer
 ---
 
 # Getting Started with Azure Resource Manager for load balancers in Python
