@@ -88,10 +88,15 @@ or [Azure Portal](http://azure.microsoft.com/documentation/articles/resource-gro
 	    export AZURE_CLIENT_SECRET={your client secret}
 	    export AZURE_SUBSCRIPTION_ID={your subscription ID}
     
-7. Run the sample.
+7. Run the sample for public load balancer.
     
-	    python example.py
-    
+	    python example_public_load_balancer.py
+   Or
+   
+   Run the sample for internal load balancer.
+            
+	    python example_internal_load_balancer.py
+   
 ## More information
 
 - [Azure SDK for Python](http://github.com/Azure/azure-sdk-for-python) 
