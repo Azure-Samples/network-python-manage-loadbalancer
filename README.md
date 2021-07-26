@@ -92,6 +92,7 @@ or [Azure Portal](http://azure.microsoft.com/documentation/articles/resource-gro
     
 	    python example_public_load_balancer.py
    Or
+   
    Run the sample for internal load balancer.
             
 	    python example_internal_load_balancer.py
