@@ -80,7 +80,6 @@ OB_POOL_NAME = 'myBackendPoolOutbound'
 # Oubtbound rule
 OB_RULE = 'myOutboundRule'
 
-
 # Manage resources and resource groups - create, update and delete a resource group,
 # deploy a solution into a resource group, export an ARM template. Create, read, update
 # and delete a resource
@@ -91,8 +90,6 @@ OB_RULE = 'myOutboundRule'
 # AZURE_CLIENT_ID: with your Azure Active Directory Application Client ID
 # AZURE_CLIENT_SECRET: with your Azure Active Directory Application Secret
 # AZURE_SUBSCRIPTION_ID: with your Azure Subscription Id
-#
-
 
 def run_example():
     import time
@@ -461,9 +458,8 @@ def run_example():
         GROUP_NAME, PUBLIC_IP_NAME
     )
     print("Public IP Address:\n{}".format(network_public_ip_info.ip_address))
-
     print("Running time: {}".format(time.time()-start_time))
-    #
+
     # Delete Resource group and everything in it
     input("Press enter to delete this Resource Group.")
     print('Delete Resource Group')
@@ -471,50 +467,5 @@ def run_example():
     delete_async_operation.wait()
     print("\nDeleted: {}".format(GROUP_NAME))
 
-
-def delete_resource_group():
-    subscription_id = os.environ.get(
-        'AZURE_SUBSCRIPTION_ID',
-        '11111111-1111-1111-1111-111111111111')  # your Azure Subscription Id
-
-    resource_client = ResourceManagementClient(
-        credential=DefaultAzureCredential(),
-        subscription_id=subscription_id
-    )
-    print('Delete Resource Group')
-    resource_client.resource_groups.begin_delete(
-        GROUP_NAME)
-
-    print('Success')
-
-
-
-def run_install_iis():
-    subscription_id = os.environ.get(
-        'AZURE_SUBSCRIPTION_ID',
-        '11111111-1111-1111-1111-111111111111')  # your Azure Subscription Id
-
-    compute_client = ComputeManagementClient(
-        credential=DefaultAzureCredential(),
-        subscription_id=subscription_id
-    )
-    RG_NAME = 'CreatePubLBQS-rg'
-    VM2_NAME = 'myVM2'
-    VM_EXT_NAME = 'CustomScriptExtension'
-    SETTINGS = '{"commandToExecute":"powershell Add-WindowsFeature Web-Server; powershell Add-Content -Path \"C:\\inetpub\\wwwroot\\Default.htm\" -Value $("Hello World from "+$env:computername)"}'
-    vm_ext_parameters = compute_models.VirtualMachineExtension(
-        location='eastus',
-        publisher='Microsoft.Compute',
-        type_handler_version='1.8',
-        settings=SETTINGS,
-    )
-    vm_ext = compute_client.virtual_machine_extensions.begin_create_or_update(
-        RG_NAME, VM2_NAME, VM_EXT_NAME, vm_ext_parameters).result()
-
-    print("Add vm_ext:\n{}".format(vm_ext))
-
-
 if __name__ == "__main__":
     run_example()
-    # run_install_iis()
-    # delete_resource_group()

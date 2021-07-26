@@ -87,7 +87,6 @@ OB_POOL_NAME = 'myBackendPoolOutbound'
 # Oubtbound rule
 OB_RULE = 'myOutboundRule'
 
-
 # Manage resources and resource groups - create, update and delete a resource group,
 # deploy a solution into a resource group, export an ARM template. Create, read, update
 # and delete a resource
@@ -98,8 +97,6 @@ OB_RULE = 'myOutboundRule'
 # AZURE_CLIENT_ID: with your Azure Active Directory Application Client ID
 # AZURE_CLIENT_SECRET: with your Azure Active Directory Application Secret
 # AZURE_SUBSCRIPTION_ID: with your Azure Subscription Id
-#
-
 
 def run_example():
     import time
@@ -173,11 +170,11 @@ def run_example():
         name=NIC_IP_CONFIG_NAME,
         subnet=network_models.SubResource(id=bastion_subnet.id),
         public_ip_address=network_models.SubResource(id=bastion_public_ip.id)
-        )
+    )
     bastion_parameters = network_models.BastionHost(
         location=LOCATION,
         ip_configurations=[ip_configuration]
-        )
+    )
 
     bastion_host = network_client.bastion_hosts.begin_create_or_update(
         GROUP_NAME,
@@ -263,7 +260,7 @@ def run_example():
                         "managed_disk": {
                             "storage_account_type": "Standard_LRS"
                         },
-                        "name": "myVMosdisk"+str(i+1),
+                        "name": "myVMosdisk" + str(i + 1),
                         "create_option": "FromImage"
                     },
                     "data_disks": [
@@ -295,22 +292,10 @@ def run_example():
             }
         ).result()
         vms.append(vm)
-        print('Create VM{} :\n{}'.format(str(i+1), vm))
-
-    # # Create PublicIP for the Load Balancer
-    # public_ip = network_client.public_ip_addresses.begin_create_or_update(
-    #     GROUP_NAME,
-    #     PUBLIC_IP_NAME,
-    #     network_models.PublicIPAddress(
-    #         location=LOCATION,
-    #         public_ip_allocation_method="Static",
-    #         sku=network_models.PublicIPPrefixSku(name="Standard")
-    #     )
-    # ).result()
-    # print("Create PublicIP for the Load Balancer:\n{}".format(public_ip))
+        print('Create VM{} :\n{}'.format(str(i + 1), vm))
 
     # Create Load Balancer
-    lb_fip_subnets = [network_subnet for network_subnet in network.subnets if network_subnet.name==SUBNET_NAME]
+    lb_fip_subnets = [network_subnet for network_subnet in network.subnets if network_subnet.name == SUBNET_NAME]
     load_balancer_parameters = network_models.LoadBalancer(
         location=LOCATION,
         sku=network_models.Sku(name=SKU),
@@ -404,61 +389,60 @@ def run_example():
 
     # Create VM for test
     vm_test_parameters = {
-                "location": LOCATION,
-                "hardware_profile": {
-                    "vm_size": "Standard_D2_v2"
+        "location": LOCATION,
+        "hardware_profile": {
+            "vm_size": "Standard_D2_v2"
+        },
+        "storage_profile": {
+            "image_reference": {
+                "sku": "2019-Datacenter",
+                "publisher": "MicrosoftWindowsServer",
+                "version": "latest",
+                "offer": "WindowsServer"
+            },
+            "os_disk": {
+                "caching": "ReadWrite",
+                "managed_disk": {
+                    "storage_account_type": "Standard_LRS"
                 },
-                "storage_profile": {
-                    "image_reference": {
-                        "sku": "2019-Datacenter",
-                        "publisher": "MicrosoftWindowsServer",
-                        "version": "latest",
-                        "offer": "WindowsServer"
-                    },
-                    "os_disk": {
-                        "caching": "ReadWrite",
-                        "managed_disk": {
-                            "storage_account_type": "Standard_LRS"
-                        },
-                        "name": "myVMosdisk",
-                        "create_option": "FromImage"
-                    },
-                    "data_disks": [
-                        {
-                            "disk_size_gb": "1023",
-                            "create_option": "Empty",
-                            "lun": "0"
-                        }
-                    ]
-                },
-                "os_profile": {
-                    "admin_username": VM_ADMIN_USERNAME,
-                    "computer_name": "myVM",
-                    "admin_password": VM_ADMIN_PASSEORD,
-                    "windows_configuration": {
-                        "enable_automatic_updates": True  # need automatic update for reimage
-                    }
-                },
-                "network_profile": {
-                    "network_interfaces": [
-                        {
-                            "id": nic_test.id,
-                            "properties": {
-                                "primary": True
-                            }
-                        }
-                    ]
+                "name": "myVMosdisk",
+                "create_option": "FromImage"
+            },
+            "data_disks": [
+                {
+                    "disk_size_gb": "1023",
+                    "create_option": "Empty",
+                    "lun": "0"
                 }
+            ]
+        },
+        "os_profile": {
+            "admin_username": VM_ADMIN_USERNAME,
+            "computer_name": "myVM",
+            "admin_password": VM_ADMIN_PASSEORD,
+            "windows_configuration": {
+                "enable_automatic_updates": True  # need automatic update for reimage
             }
+        },
+        "network_profile": {
+            "network_interfaces": [
+                {
+                    "id": nic_test.id,
+                    "properties": {
+                        "primary": True
+                    }
+                }
+            ]
+        }
+    }
     vm_test = compute_client.virtual_machines.begin_create_or_update(
         GROUP_NAME,
         VM_TEST_NAME,
         vm_test_parameters
     ).result()
     print('Create VM for test:\n{}'.format(vm_test))
+    print("Running time: {}".format(time.time() - start_time))
 
-    print("Running time: {}".format(time.time()-start_time))
-    #
     # Delete Resource group and everything in it
     input("Press enter to delete this Resource Group.")
     print('Delete Resource Group')
@@ -466,140 +450,5 @@ def run_example():
     delete_async_operation.wait()
     print("\nDeleted: {}".format(GROUP_NAME))
 
-
-
-    return
-
-    # Create Public IP for the Outbound Connectivity
-    outbound_rule_ip = network_client.public_ip_addresses.begin_create_or_update(
-        GROUP_NAME,
-        PUBLIC_IP_OB_NAME,
-        network_models.PublicIPAddress(
-            location=LOCATION,
-            public_ip_allocation_method="Static",
-            sku=network_models.PublicIPPrefixSku(name="Standard")
-        )
-    ).result()
-    print("Create Public IP for the Outbound Connectivity:\n{}".format(outbound_rule_ip))
-
-    # Create Frontend IP Configuration
-    load_balancer_parameters.frontend_ip_configurations.append(
-        network_models.FrontendIPConfiguration(
-            name=FIP_OB_NAME,
-            public_ip_address=outbound_rule_ip
-        )
-    )
-    lb_fip_config = network_client.load_balancers.begin_create_or_update(
-        GROUP_NAME,
-        LB_NAME,
-        load_balancer_parameters
-    ).result().frontend_ip_configurations
-    print("Create Frontend IP Configuration:\n{}".format(lb_fip_config[-1]))
-
-    # Create Outbound Pool
-    load_balancer_parameters.backend_address_pools.append(
-        network_models.BackendAddressPool(
-            name=OB_POOL_NAME,
-        )
-    )
-    lb_ob_pool = network_client.load_balancers.begin_create_or_update(
-        GROUP_NAME,
-        LB_NAME,
-        load_balancer_parameters
-    ).result().backend_address_pools
-    print("Create Outbound Pool:\n{}".format(lb_ob_pool[-1]))
-
-    # Create Outbound Rule for the Outbound Backend Pool
-    load_balancer_parameters.outbound_rules = [
-        network_models.OutboundRule(
-            name=OB_RULE,
-            frontend_ip_configurations=[network_models.SubResource(id=lb_fip_config[-1].id)],
-            protocol='All',
-            idle_timeout_in_minutes=15,
-            allocated_outbound_ports=10000,
-            backend_address_pool=network_models.SubResource(id=lb_ob_pool[-1].id)
-        )
-    ]
-    lb_ob_rule = network_client.load_balancers.begin_create_or_update(
-        GROUP_NAME,
-        LB_NAME,
-        load_balancer_parameters
-    ).result().outbound_rules
-    print("Create Outbound Rule for the Outbound Backend Pool:\n{}".format(lb_ob_rule[-1]))
-
-    # Add VMs to the Outbound Pool
-    ob_pool_info = network_client.load_balancer_backend_address_pools.get(
-        GROUP_NAME,
-        LB_NAME,
-        OB_POOL_NAME
-    )
-    for i in range(3):
-        vmnic_info = network_client.network_interfaces.get(
-            GROUP_NAME, NIC_NAMES[i]
-        )
-        for ip_conf in vmnic_info.ip_configurations:
-            if ip_conf.name == NIC_IP_CONFIG_NAME:
-                ip_conf.load_balancer_backend_address_pools.append(ob_pool_info)
-
-        add_vm_to_lb_op = network_client.network_interfaces.begin_create_or_update(
-            GROUP_NAME,
-            NIC_NAMES[i],
-            vmnic_info
-        ).result().ip_configurations
-        print("Add {} to Load Balancer Outbound Pool: \n{}".format(NIC_NAMES[i], add_vm_to_lb_op))
-
-    # Get the Public IP Address of the Load Balancer
-    network_public_ip_info = network_client.public_ip_addresses.get(
-        GROUP_NAME, PUBLIC_IP_NAME
-    )
-    print("Public IP Address:\n{}".format(network_public_ip_info.ip_address))
-
-
-
-
-def delete_resource_group():
-    subscription_id = os.environ.get(
-        'AZURE_SUBSCRIPTION_ID',
-        '11111111-1111-1111-1111-111111111111')  # your Azure Subscription Id
-
-    resource_client = ResourceManagementClient(
-        credential=DefaultAzureCredential(),
-        subscription_id=subscription_id
-    )
-    print('Delete Resource Group')
-    resource_client.resource_groups.begin_delete(
-        GROUP_NAME)
-
-    print('Success')
-
-
-
-def run_install_iis():
-    subscription_id = os.environ.get(
-        'AZURE_SUBSCRIPTION_ID',
-        '11111111-1111-1111-1111-111111111111')  # your Azure Subscription Id
-
-    compute_client = ComputeManagementClient(
-        credential=DefaultAzureCredential(),
-        subscription_id=subscription_id
-    )
-    RG_NAME = 'CreatePubLBQS-rg'
-    VM2_NAME = 'myVM2'
-    VM_EXT_NAME = 'CustomScriptExtension'
-    SETTINGS = '{"commandToExecute":"powershell Add-WindowsFeature Web-Server; powershell Add-Content -Path \"C:\\inetpub\\wwwroot\\Default.htm\" -Value $("Hello World from "+$env:computername)"}'
-    vm_ext_parameters = compute_models.VirtualMachineExtension(
-        location='eastus',
-        publisher='Microsoft.Compute',
-        type_handler_version='1.8',
-        settings=SETTINGS,
-    )
-    vm_ext = compute_client.virtual_machine_extensions.begin_create_or_update(
-        RG_NAME, VM2_NAME, VM_EXT_NAME, vm_ext_parameters).result()
-
-    print("Add vm_ext:\n{}".format(vm_ext))
-
-
 if __name__ == "__main__":
     run_example()
-    # run_install_iis()
-    # delete_resource_group()
