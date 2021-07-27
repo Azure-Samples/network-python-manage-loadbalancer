@@ -5,7 +5,6 @@ from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.network import NetworkManagementClient
 from azure.mgmt.network import models as network_models
 from azure.mgmt.compute import ComputeManagementClient
-from azure.mgmt.compute import models as compute_models
 
 # Azure Datacenter
 LOCATION = 'eastus'
@@ -463,9 +462,9 @@ def run_example():
     # Delete Resource group and everything in it
     input("Press enter to delete this Resource Group.")
     print('Delete Resource Group')
-    delete_async_operation = resource_client.resource_groups.delete(GROUP_NAME)
-    delete_async_operation.wait()
+    delete_group = resource_client.resource_groups.begin_delete(GROUP_NAME)
     print("\nDeleted: {}".format(GROUP_NAME))
+
 
 if __name__ == "__main__":
     run_example()
